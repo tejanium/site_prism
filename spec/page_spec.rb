@@ -49,6 +49,21 @@ describe SitePrism::Page do
     expect(page_with_url.url).to eq('/users')
   end
 
+  it "should behave differently" do
+    class MyPageWithUriTemplate < SitePrism::Page
+      set_url "/users{/username}"
+    end
+
+    page_with_url_1 = MyPageWithUriTemplate.new
+    page_with_url_2 = MyPageWithUriTemplate.new
+
+    expect { page_with_url_1.load(username: 'foo') }.to_not raise_error
+    expect { page_with_url_2.load(username: 'bar') }.to_not raise_error
+
+    expect(page_with_url_1.current_url).to eq('http://www.example.com/users/foo')
+    expect(page_with_url_2.current_url).to eq('http://www.example.com/users/bar')
+  end
+
   it "should allow to load html" do
     class Page < SitePrism::Page; end
     page = Page.new

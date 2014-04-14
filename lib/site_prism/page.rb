@@ -4,8 +4,12 @@ module SitePrism
     include ElementChecker
     extend ElementContainer
 
+    def initialize
+      @session_name = SecureRandom.hex(13)
+    end
+
     def page
-      @page || Capybara.current_session
+      @page || using_session(@session_name) { Capybara.current_session }
     end
 
     def load(expansion_or_html = {})
